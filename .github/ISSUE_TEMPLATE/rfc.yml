@@ -1,0 +1,21 @@
+name: RFC proposal
+description: Propose a significant specification change
+title: "[RFC]: "
+labels:
+  - rfc
+body:
+  - type: markdown
+    attributes:
+      value: Significant design changes should be submitted using `rfcs/0000-template.md` in a pull request.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem summary
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Expected specification impact
+    validations:
+      required: true

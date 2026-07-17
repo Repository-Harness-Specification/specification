@@ -1,0 +1,82 @@
+spec: repository-harness/0.1
+
+repository:
+  name: minimal-example
+  description: Minimal Repository Harness example
+
+entrypoint: AGENTS.md
+
+documents:
+  - id: architecture
+    path: ARCHITECTURE.md
+    purpose: Architectural boundaries and dependency rules
+    load_when:
+      - feature
+      - bugfix
+      - refactoring
+
+  - id: bootstrap
+    path: BOOTSTRAP.md
+    purpose: Toolchain and environment preparation
+    load_when:
+      - setup
+      - environment-failure
+
+  - id: validation
+    path: VALIDATION.md
+    purpose: Required automated and manual checks
+    load_when:
+      - feature
+      - bugfix
+      - refactoring
+      - completion
+    required: true
+
+  - id: workflows
+    path: WORKFLOWS.md
+    purpose: Task-specific implementation workflows
+    load_when:
+      - feature
+      - bugfix
+      - refactoring
+
+commands:
+  - id: validate
+    run: ./.harness/scripts/validate.sh
+    description: Run the repository's complete automated validation
+    mutates: false
+    requires_approval: false
+
+routes:
+  - id: bootstrap
+    description: Prepare or diagnose the local environment
+    load:
+      - bootstrap
+      - validation
+    validate:
+      - validate
+
+  - id: feature
+    description: Implement a new feature
+    load:
+      - architecture
+      - workflows
+      - validation
+    validate:
+      - validate
+
+  - id: bugfix
+    description: Fix an existing behavior
+    load:
+      - architecture
+      - workflows
+      - validation
+    validate:
+      - validate
+
+  - id: completion
+    description: Review whether work can be reported as complete
+    load:
+      - validation
+    validate:
+      - validate
