@@ -1,33 +1,32 @@
-# Migrate monolithic agent instructions to a Repository Harness
+# Migrate monolithic agent instructions to a Repository Harness without internet access
 
 Migrate the target repository's existing agent instructions into a Repository Harness.
 
-You are operating inside the target repository.
+You are operating inside the target repository without internet access.
 
-## Authoritative references
+## Required attached references
 
-Before modifying the repository, read:
+Before modifying the repository, confirm that the following files are attached to the current agent session:
 
-- Specification:
-  https://raw.githubusercontent.com/Repository-Harness-Specification/specification/main/SPECIFICATION.md
+```text
+SPECIFICATION.md
+harness.schema.json
+minimal-harness.yaml
+```
 
-- Manifest schema:
-  https://raw.githubusercontent.com/Repository-Harness-Specification/specification/main/schema/harness.schema.json
+They must all come from the same Repository Harness Specification branch, tag, release, or commit.
 
-- Minimal example:
-  https://raw.githubusercontent.com/Repository-Harness-Specification/specification/main/examples/minimal/.harness/harness.yaml
+Treat the attached files as the authoritative specification snapshot.
 
-These resources are the source of truth.
-
-The JSON Schema is authoritative for the structure of `.harness/harness.yaml`.
+The attached JSON Schema is authoritative for the structure of `.harness/harness.yaml`.
 
 The minimal example is illustrative. Do not force its exact document structure onto the target repository.
 
-Do not copy the specification, schema, or reference example into the target repository.
+Do not copy the attached specification, schema, or example into the target repository.
 
 Do not reproduce or extend the manifest format based only on this prompt.
 
-If any authoritative reference cannot be accessed, stop and report that the migration cannot be verified.
+If any required reference is missing, unreadable, or from an inconsistent version, stop and report that the migration cannot be verified.
 
 ## Inspect the target repository
 
@@ -52,7 +51,7 @@ Do not infer that an example, planned feature, or aspirational design already ex
 2. Replace the monolithic instruction file with a small supported entry point.
 3. Move detailed repository knowledge into `.harness/`.
 4. Organize content by capability.
-5. Create `.harness/harness.yaml` according to the official specification and schema.
+5. Create `.harness/harness.yaml` according to the attached specification and schema.
 6. Avoid inventing commands, paths, tools, architecture rules, or project requirements.
 7. Identify contradictory, obsolete, duplicated, or unverifiable instructions.
 8. Create reproducible validation scripts only when justified.
@@ -88,7 +87,7 @@ The migration report is a temporary review artifact and does not need to be regi
 
 - Keep the root entry point small.
 - Point the entry point to `.harness/harness.yaml`.
-- Register documents, commands, and routes according to the official schema.
+- Register documents, commands, and routes according to the attached schema.
 - Preserve distinctions such as must, should, may, prefer, and avoid.
 - Do not convert examples into mandatory rules.
 - Do not convert future plans into current implementation claims.
@@ -110,13 +109,13 @@ After migration:
 2. confirm that every substantive rule has a destination;
 3. verify that all registered documents and commands exist;
 4. verify that routes reference valid document and command IDs;
-5. validate `.harness/harness.yaml` against the official schema;
+5. validate `.harness/harness.yaml` against the attached schema;
 6. execute safe validation commands when possible;
 7. confirm that command failures produce non-zero exit codes;
 8. record commands that were not executed;
 9. report unresolved questions and manual checks.
 
-Do not claim specification compliance unless schema validation succeeds.
+Do not claim specification compliance unless schema validation succeeds against the attached schema.
 
 Do not report repository validation as successful when a required command failed, was skipped, or could not be executed.
 
@@ -124,6 +123,7 @@ Do not report repository validation as successful when a required command failed
 
 The migration report must include:
 
+- specification snapshot or version used;
 - source files analyzed;
 - files created and modified;
 - mapping from original sections to harness capabilities;
