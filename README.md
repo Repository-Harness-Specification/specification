@@ -50,30 +50,33 @@ The Repository Harness provides modular, versioned, discoverable, and executable
 
 Many repositories already contain a large `AGENTS.md`, `CLAUDE.md`, or another agent-specific instruction file.
 
-Until the `harness-me` CLI is available, this repository provides a migration prompt that can be given to a coding agent.
+Until the `harness-me` CLI is available, this repository provides migration prompts that can be given to a coding agent.
 
-The prompt instructs the agent to:
+The prompts instruct the agent to:
 
 - inspect the target repository;
-- read the official Repository Harness Specification online;
-- analyze the existing monolithic instruction file;
+- read the official Repository Harness Specification;
+- analyze the existing repository instructions;
 - preserve meaningful rules and constraints;
 - create a small root entry point;
 - organize detailed knowledge under `.harness/`;
 - create a valid `.harness/harness.yaml`;
 - avoid inventing commands or architecture rules;
 - identify unresolved or unverifiable information;
-- produce a migration report for human review.
+- produce a concise migration report for human review.
 
-See:
+Two migration modes are available:
 
-[`prompts/migrate-monolithic-agent-instructions.md`](prompts/migrate-monolithic-agent-instructions.md)
+- [Online migration prompt](prompts/migrate-monolithic-agent-instructions.md)
+- [Offline migration prompt](prompts/migrate-monolithic-agent-instructions-offline.md)
+
+Use the online prompt when the coding agent can access this public repository.
+
+Use the offline prompt when internet access is restricted. In that case, the specification, schema, and minimal example must be downloaded manually and attached to the agent session.
 
 The user does not need to copy `SPECIFICATION.md`, the JSON Schema, or the reference examples into the target repository.
 
-The coding agent reads those resources from this official public repository and creates only the harness artifacts required by the target project.
-
-A typical result may look like:
+A typical migration result may look like:
 
 ```text
 AGENTS.md
@@ -92,6 +95,54 @@ The exact document set depends on the repository.
 
 These prompts are adoption helpers. They are not normative parts of the specification.
 
+## Review the migration report
+
+Both migration prompts create:
+
+```text
+REPOSITORY_HARNESS_MIGRATION_REPORT.md
+```
+
+This file is a temporary human-review artifact.
+
+It is not part of the Repository Harness itself and must not be registered in `.harness/harness.yaml`.
+
+The report is intentionally concise and exception-based. It should normally remain under 60 lines.
+
+It should summarize:
+
+- the migration result;
+- files created or modified;
+- instructions that were removed, changed, merged, or left unresolved;
+- schema and repository validation results;
+- manual decisions still required.
+
+It should not include:
+
+- a complete list of every file inspected;
+- a mapping for every successfully migrated section;
+- repeated descriptions of the same validation result;
+- shell commands that are not relevant to the review;
+- implementation details that do not require a human decision.
+
+Before accepting the migration, a human reviewer should verify:
+
+- that important instructions were preserved;
+- that reported exceptions were handled correctly;
+- that schema validation succeeded;
+- that repository validation results are understood;
+- that unresolved questions have an owner or decision.
+
+The expected workflow is:
+
+```text
+generate → review exceptions → correct → validate → approve → remove report
+```
+
+The report may be removed after the migration has been reviewed and accepted.
+
+A project may preserve it only when it intentionally wants to retain the migration history.
+
 ## Official references
 
 - [Repository Harness Specification](SPECIFICATION.md)
@@ -99,7 +150,11 @@ These prompts are adoption helpers. They are not normative parts of the specific
 - [Minimal Repository Harness example](examples/minimal)
 - [Minimal manifest example](examples/minimal/.harness/harness.yaml)
 
-The public raw versions of these files may be consumed directly by coding agents during migration.
+These resources are the source of truth for migrations and implementations.
+
+The JSON Schema is authoritative for the structure of `.harness/harness.yaml`.
+
+The minimal example demonstrates one valid implementation. It is not a mandatory directory structure.
 
 ## Minimal example
 
@@ -133,7 +188,8 @@ The example demonstrates:
 │   └── minimal/
 ├── prompts/
 │   ├── README.md
-│   └── migrate-monolithic-agent-instructions.md
+│   ├── migrate-monolithic-agent-instructions.md
+│   └── migrate-monolithic-agent-instructions-offline.md
 ├── rfcs/
 ├── scripts/
 └── .github/
@@ -159,7 +215,7 @@ Draft `0.1` currently uses:
 spec: repository-harness/0.1
 ```
 
-References in the migration prompt currently point to the `main` branch while draft `0.1` is evolving.
+References in the migration prompts currently point to the `main` branch while draft `0.1` is evolving.
 
 Once the draft is frozen, migration prompts should reference a specific release tag so that the same prompt always resolves to the same specification version.
 

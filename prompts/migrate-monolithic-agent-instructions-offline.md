@@ -121,18 +121,56 @@ Do not report repository validation as successful when a required command failed
 
 ## Migration report
 
-The migration report must include:
+Create a concise `REPOSITORY_HARNESS_MIGRATION_REPORT.md`.
 
-- specification snapshot or version used;
-- source files analyzed;
-- files created and modified;
-- mapping from original sections to harness capabilities;
-- duplicated rules intentionally preserved and why;
-- contradictions and obsolete instructions;
-- assumptions and unresolved questions;
-- commands executed and their results;
-- commands not executed;
-- schema validation result;
-- manual review still required.
+The report is a temporary human-review artifact and should normally remain under 60 lines.
 
-Do not delete source instructions until the migration has been reviewed.
+Use this structure:
+
+```markdown
+# Repository Harness Migration Report
+
+Status: Ready for review | Needs decisions | Validation failed
+
+## Summary
+
+Briefly describe what was migrated.
+
+## Changes
+
+- Files created:
+- Files modified:
+
+## Exceptions requiring review
+
+List only instructions that were removed, changed, merged, contradicted,
+left unresolved, or could not be verified.
+
+Write `None` when there are no exceptions.
+
+## Validation
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| Schema validation | Passed/Failed/Not run | |
+| Registered references | Passed/Failed/Not run | |
+| Repository validation | Passed/Failed/Not run | |
+
+## Next actions
+
+List only the remaining human decisions or validation steps.
+```
+
+Do not include:
+
+- every file inspected;
+- a complete section-by-section mapping when migration succeeded normally;
+- repeated validation explanations;
+- routine shell commands;
+- successful operations that require no human decision.
+
+Include source-to-destination mapping only for exceptions, ambiguous migrations,
+merged rules, removed rules, or unresolved instructions.
+
+Do not claim the migration is ready when schema validation or required repository
+validation failed.

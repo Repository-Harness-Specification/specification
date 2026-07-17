@@ -83,7 +83,59 @@ The migration also creates:
 REPOSITORY_HARNESS_MIGRATION_REPORT.md
 ```
 
-This report is a temporary human-review artifact. It does not need to remain in the repository after the migration is accepted.
+## Review the migration report
+
+`REPOSITORY_HARNESS_MIGRATION_REPORT.md` is a temporary human-review artifact.
+
+It is not:
+
+- a harness capability;
+- a normative specification file;
+- a document that should be registered in `.harness/harness.yaml`.
+
+The report should be concise, exception-based, and normally no longer than 60 lines.
+
+It should contain:
+
+- a short migration status;
+- files created or modified;
+- instructions that were removed, changed, merged, or left unresolved;
+- a single validation summary;
+- manual decisions still required.
+
+It should not contain:
+
+- every file inspected by the agent;
+- a complete mapping of sections migrated without issues;
+- repeated validation descriptions;
+- routine shell commands;
+- implementation details that require no human decision.
+
+A detailed section mapping is only necessary when:
+
+- an instruction was not migrated;
+- multiple rules were merged and their meaning may have changed;
+- a rule was intentionally removed;
+- conflicting sources required a decision;
+- the agent could not determine the correct destination.
+
+Before merging the migration, review:
+
+- reported exceptions;
+- assumptions and unresolved questions;
+- schema validation status;
+- repository validation results;
+- manual checks still required.
+
+The expected workflow is:
+
+```text
+generate → review exceptions → correct → validate → approve → remove report
+```
+
+The report may be removed after the migration has been reviewed and accepted.
+
+A project may preserve it only when it intentionally wants to retain the migration history.
 
 ## Source of truth
 
