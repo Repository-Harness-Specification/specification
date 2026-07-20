@@ -2,7 +2,7 @@ spec: repository-harness/0.2
 
 repository:
   name: minimal-example
-  description: Minimal example of repository-defined, path-aware context routing
+  description: Minimal path-aware context routing example
 
 entrypoint: AGENTS.md
 
@@ -19,53 +19,46 @@ documents:
     path: .harness/BOOTSTRAP.md
     purpose: Toolchain preparation and environment diagnostics
 
-  - id: validation
-    path: .harness/VALIDATION.md
-    purpose: Automated and manual validation expectations
-
   - id: workflows
     path: .harness/WORKFLOWS.md
-    purpose: Implementation and regression-fix workflow guidance
+    purpose: Implementation and regression workflow guidance
 
-concerns:
-  - id: source-change
-    description: A change to implementation or test behavior
-    signals:
-      - The task modifies files under src or tests
-      - The task changes observable runtime behavior
+scopes:
+  - id: source
+    paths:
+      - src/**
+      - tests/**
+      - "**/*.csproj"
 
   - id: architecture-boundary
-    description: A change to module ownership or dependency direction
-    signals:
-      - A new dependency is introduced
-      - Responsibility moves between modules or layers
-      - A public boundary or composition root changes
+    paths:
+      - src/**/Composition/**
+      - "**/*.csproj"
 
+concerns:
   - id: environment-setup
-    description: Local toolchain setup or environment diagnosis
-    signals:
-      - A required executable is missing
-      - Bootstrap or dependency installation fails
-
-  - id: documentation-change
-    description: A change limited to human-readable documentation
-    signals:
-      - Candidate paths contain only Markdown documentation
+    description: Toolchain setup or environment diagnosis
 
 commands:
   - id: validate
     run: ./.harness/scripts/validate.sh
-    description: Run the repository's complete automated validation
-    mutates: false
-    requires_approval: false
+    description: Run automated repository validation
     availability:
       executables:
         - sh
       on_unavailable: report
 
+validation_rules:
+  - match:
+      scopes:
+        any:
+          - source
+    commands:
+      - validate
+
 routes:
   - id: environment-diagnosis
-    description: Prepare or diagnose the local development environment
+    description: Prepare or diagnose the local environment
     match:
       concerns:
         any:
@@ -73,92 +66,19 @@ routes:
     context:
       required:
         - bootstrap
-      conditional:
-        - document: validation
-          when:
-            paths:
-              any:
-                - .harness/scripts/**
-          reason: Load validation expectations only when diagnosing validation scripts
-    validation:
-      required: []
-      conditional: []
-
-  - id: architecture-change
-    description: Change module ownership, dependencies, or architectural boundaries
-    match:
-      concerns:
-        any:
-          - architecture-boundary
-    context:
-      required:
-        - architecture
-        - workflows
-      conditional:
-        - document: validation
-          when:
-            paths:
-              any:
-                - src/**
-                - tests/**
-          reason: Load validation expectations when architecture work changes source or tests
-    validation:
-      required:
-        - validate
-      conditional: []
 
   - id: source-change
-    description: Change implementation or tests without an architectural boundary change
+    description: Change implementation, tests, or project dependencies
     match:
-      concerns:
+      scopes:
         any:
-          - source-change
-      paths:
-        any:
-          - src/**
-          - tests/**
+          - source
     context:
       required:
         - workflows
       conditional:
         - document: architecture
           when:
-            paths:
+            scopes:
               any:
-                - src/**/Architecture/**
-                - src/**/Composition/**
-          reason: Load architecture rules only after candidate paths reach an architectural boundary
-        - document: bootstrap
-          when:
-            concerns:
-              any:
-                - environment-setup
-          reason: Load bootstrap guidance only after an environment problem appears
-    validation:
-      required:
-        - validate
-      conditional: []
-
-  - id: documentation-only
-    description: Change documentation without modifying implementation or test behavior
-    match:
-      concerns:
-        any:
-          - documentation-change
-      paths:
-        any:
-          - "**/*.md"
-    context:
-      required: []
-      conditional:
-        - document: architecture
-          when:
-            paths:
-              any:
-                - docs/architecture/**
-                - .harness/ARCHITECTURE.md
-          reason: Load architecture guidance only when architecture documentation changes
-    validation:
-      required:
-        - validate
-      conditional: []
+                - architecture-boundary

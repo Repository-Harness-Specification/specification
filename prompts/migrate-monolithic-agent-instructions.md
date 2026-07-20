@@ -1,12 +1,14 @@
 # Migrate monolithic agent instructions to Repository Harness draft 0.2
 
-Migrate the target repository's existing agent instructions into a Repository Harness conforming to draft `0.2`.
+Migrate the target repository's existing agent instructions into a Repository
+Harness conforming to draft `0.2`.
 
 You are operating inside the target repository.
 
 ## Authoritative references
 
-Before modifying the repository, read these pinned draft `0.2` references:
+Before modifying the repository, read these draft `0.2` references from the
+same commit:
 
 - Specification:
   https://raw.githubusercontent.com/Repository-Harness-Specification/specification/main/versions/0.2/SPECIFICATION.md
@@ -17,189 +19,221 @@ Before modifying the repository, read these pinned draft `0.2` references:
 - Minimal example:
   https://raw.githubusercontent.com/Repository-Harness-Specification/specification/main/examples/0.2/minimal/.harness/harness.yaml
 
-These resources are the source of truth for this migration.
+The schema is authoritative for manifest structure. The specification is
+authoritative for behavior and conformance. The example is illustrative.
 
-The JSON Schema is authoritative for manifest structure. The specification is authoritative for behavior and conformance. The minimal example is illustrative.
+Do not copy these reference files into the target repository.
 
-Do not copy the specification, schema, or reference example into the target repository.
+If a reference cannot be accessed, stop and report that the migration cannot be
+verified.
 
-Do not reproduce or extend the manifest format based only on this prompt.
+## Working style
 
-If any authoritative reference cannot be accessed, stop and report that the migration cannot be verified.
+Perform the migration. Do not narrate routine repository inspection.
+
+Keep generated documents and the migration report concise. Do not create prose
+only to make the harness appear complete.
 
 ## Inspect the target repository
 
-Inspect relevant sources before creating files, including:
+Inspect only sources needed to preserve authoritative instructions and derive
+routing, including:
 
-- existing `AGENTS.md`, `CLAUDE.md`, Copilot, Cursor, or other agent instructions;
-- repository directory and module boundaries;
+- existing agent instructions;
+- directory and module boundaries;
 - architecture and design documentation;
-- testing and validation documentation;
-- contributor and bootstrap documentation;
 - build, test, lint, and validation scripts;
-- project or dependency manifests;
-- CI workflows;
-- roadmap and product constraints.
+- project manifests and CI workflows;
+- roadmap or product constraints only when they contain active rules.
 
-Inspect enough repository structure to derive repository-specific concerns and path scopes. Do not load or duplicate unrelated documentation merely to create a large harness.
-
-Do not infer that an example, planned feature, or aspirational design already exists in the implementation.
+Do not turn examples, future plans, or aspirational designs into current rules.
 
 ## Objectives
 
 1. Preserve meaningful rules and their original authority.
 2. Replace the monolithic instruction file with a small supported entry point.
-3. Move detailed repository knowledge into repository-appropriate files under `.harness/` or register existing authoritative repository documents.
+3. Move detailed knowledge into a small set of repository-appropriate documents.
 4. Create `.harness/harness.yaml` according to draft `0.2`.
-5. Derive concerns, paths, documents, commands, and routes from the target repository.
-6. Select a small required context set for each route.
-7. Make additional context conditional on concrete concern or path evidence.
-8. Register reproducible commands and checkable availability requirements when justified.
-9. Avoid inventing commands, paths, tools, architecture rules, concerns, or project requirements.
-10. Identify contradictory, obsolete, duplicated, or unverifiable instructions.
-11. Simulate representative tasks and revise broad or duplicate routes.
-12. Produce a concise migration and routing audit report for human review.
+5. Prefer reusable path scopes over repeated path lists.
+6. Use concerns only when path scopes are insufficient.
+7. Select the smallest required context set for each route.
+8. Make additional context conditional on concrete evidence.
+9. Move repeated validation selection into `validation_rules`.
+10. Register reproducible commands and availability requirements when justified.
+11. Simulate representative tasks and simplify the result.
+12. Produce a concise migration and routing audit report.
+
+Do not invent commands, paths, tools, architecture rules, concerns, or project
+requirements.
 
 ## Target output
 
-Create only the artifacts required by the target repository:
+Create only artifacts justified by the repository:
 
 ```text
 AGENTS.md or another supported entry point
 
 .harness/
 ├── harness.yaml
-├── repository-specific knowledge documents
-└── scripts when justified
+├── a small set of repository-specific knowledge documents
+└── scripts only when justified
 ```
 
-Do not create empty documents.
-
-Do not create every document, concern, route, or command shown by the minimal example.
-
-Create:
+Also create:
 
 ```text
 REPOSITORY_HARNESS_MIGRATION_REPORT.md
 ```
 
-The report is a temporary human-review artifact and must not be registered in `harness.yaml`.
+The report is temporary and must not be registered in the manifest.
+
+Do not create empty documents. Do not create one document for every section of
+the original instruction file.
+
+## Manifest budget
+
+Generate the smallest manifest that can route representative tasks.
+
+The root `.harness/harness.yaml` must:
+
+- target no more than 200 non-blank, non-comment lines;
+- remain below 250 non-blank, non-comment lines;
+- target no more than 12 KiB and remain below 16 KiB;
+- begin with no more than six routes;
+- begin with no more than eight concerns;
+- omit empty arrays and empty objects;
+- omit `mutates: false` and `requires_approval: false`;
+- omit prose that only restates selectors;
+- contain no static conditional `reason` fields;
+- contain no implementation guidance that belongs in Markdown;
+- use scopes when a path group appears more than once;
+- avoid routes with identical effective context and validation;
+- avoid routes that only load the file already being edited;
+- avoid one route per document, directory, task noun, or roadmap file.
+
+These budgets are not an invitation to compress YAML unnaturally. Simplify the
+model instead.
+
+A route should require at most two documents. When more are necessary, explain
+the repository-specific reason in the migration report, not in repetitive
+manifest prose.
 
 ## Routing requirements
 
 The routing vocabulary belongs to the target repository.
 
-Do not create universal `feature`, `bugfix`, `implementation`, `refactoring`, or `validation` routes unless each route selects meaningfully different context or validation based on repository evidence.
+Start with path scopes. Add concerns only when task intent materially changes
+routing and path evidence cannot express that distinction.
 
-Use repository-defined concerns and repository-relative path scopes.
+Do not create universal `feature`, `bugfix`, `implementation`, `refactoring`,
+or `validation` routes unless they select materially different outcomes.
 
-Order routes from narrowest to broadest because draft `0.2` uses first-match semantics.
+Do not use every file of a programming language as an architecture trigger.
 
-Each route must define:
+Architecture guidance should be triggered only by concrete boundary indicators,
+such as:
 
-- how it matches concerns, paths, or both;
-- a minimal `context.required` set;
-- conditional documents with concrete triggers and reasons;
-- required and conditional validation commands.
+- project or package dependency files;
+- composition roots;
+- public cross-layer contracts;
+- responsibility moving between layers;
+- repository-defined architectural boundary paths.
 
-Do not make a document globally required merely because it may sometimes be useful.
+Generic workflow guidance must not be loaded for every code change merely
+because workflow guidance exists.
 
-Do not place architecture, workflow, bootstrap, testing, and validation documents into every route by default.
+Order routes from narrowest to broadest. Use `routing.on_no_match: report` or
+`ask` instead of a catch-all route that loads all documents.
 
-Do not create two routes with the same effective context and validation unless their selection behavior is meaningfully different and documented.
+## Validation requirements
 
-When no route can be derived safely, prefer `routing.on_no_match: report` and record the missing decision instead of creating a catch-all route that loads all documents.
+Prefer existing project commands. Create wrappers only when they improve
+reproducibility, portability, or failure propagation.
 
-## Path requirements
-
-All manifest paths are relative to the repository root.
-
-Use `/` separators. Do not use absolute paths, Windows drive prefixes, backslashes, or `..` traversal.
-
-Reference only paths that exist, except route glob patterns that intentionally describe candidate files.
-
-## Command requirements
-
-Prefer existing project commands over unnecessary wrappers.
-
-Create scripts only when they improve reproducibility, failure propagation, portability, or CI verification.
+Use top-level `validation_rules` when the same command set applies to multiple
+routes based on changed paths.
 
 Commands must propagate non-zero exit status.
 
-Declare checkable availability requirements when missing executables, platform restrictions, or required environment variables are known.
-
-Do not report an unavailable, skipped, or failed required command as successful.
+Declare availability requirements when missing tools or platforms are known.
+Do not improvise unregistered replacements unless repository instructions
+authorize them.
 
 Separate automated validation from manual verification.
 
-Do not improvise unregistered replacement commands unless repository instructions explicitly authorize them.
-
-## Entry-point requirements
+## Entry point
 
 The supported root entry point must instruct the agent to:
 
 1. read `.harness/harness.yaml`;
-2. classify repository-defined concerns;
-3. perform shallow path discovery;
-4. select the first matching route;
-5. load required context only;
-6. load conditional context only after its trigger matches;
-7. re-evaluate routing when scope changes;
-8. check command availability;
-9. report routing and validation evidence.
+2. perform shallow discovery;
+3. select the first matching route;
+4. load required context only;
+5. load conditional context only after a trigger matches;
+6. apply matching validation rules;
+7. check command availability;
+8. report concise routing and validation evidence.
 
 Keep the entry point concise.
 
 ## Representative-task simulation
 
-Before accepting the generated harness, simulate at least three materially different tasks representative of this repository.
+Before accepting the harness, simulate at least three materially different
+repository tasks.
 
-At least one simulation should be narrow enough that architecture or full validation guidance is not automatically required, when the repository supports such a task.
-
-For each simulation, record:
+For each simulation record only:
 
 - task summary;
-- active concerns;
-- candidate path evidence;
+- candidate path and concern evidence;
 - selected route;
-- required documents;
-- conditional documents and whether their triggers match;
-- required and conditional validation.
+- required context;
+- triggered context;
+- selected validation.
+
+At least one simulation must be narrow enough that architecture and generic
+workflow guidance are not automatically loaded when the repository supports
+such a task.
 
 Revise the manifest when:
 
 - unrelated documents would load;
-- nearly every route loads nearly every document;
-- two routes produce the same context and validation;
+- a document is referenced by more than 60 percent of routes;
+- a route requires more than two documents without clear need;
+- two routes produce the same outcome;
+- a path group is repeated instead of becoming a scope;
 - a broad concern is the only selector;
-- route order selects a broader route before a narrower route;
-- no-match behavior silently loads all documents.
+- route order chooses a broader route first;
+- the manifest exceeds the target budgets.
+
+Before completion, calculate:
+
+- non-blank, non-comment line count;
+- UTF-8 byte size;
+- document, scope, concern, route, command, and validation-rule counts;
+- percentage of routes referencing each document.
+
+Continue simplifying until the budgets pass or report the precise blocker.
 
 ## Verification
 
 After migration:
 
-1. compare original instructions with the new harness;
-2. confirm every substantive rule has a destination or a reported exception;
-3. validate `harness.yaml` against the pinned draft `0.2` schema;
-4. verify identifiers and cross-references;
-5. verify registered document and command paths;
-6. execute safe availability checks;
-7. execute safe required validation commands when possible;
-8. confirm command failures return non-zero status;
-9. record unavailable and unexecuted commands;
-10. confirm the representative-task simulations use selective context;
-11. report unresolved questions and manual checks.
+1. compare the original instructions with the new harness;
+2. confirm every substantive rule has a destination or reported exception;
+3. validate `harness.yaml` against the draft `0.2` schema;
+4. verify identifiers, references, and paths;
+5. execute safe availability checks;
+6. execute safe selected validation when possible;
+7. record unavailable or unexecuted commands;
+8. confirm the task simulations use selective context.
 
-Do not claim draft `0.2` conformance unless schema and cross-reference validation succeed.
-
-Do not claim repository validation succeeded when a required or triggered command failed, was unavailable, or was not run.
+Do not claim conformance unless schema and cross-reference validation succeed.
+Do not claim validation succeeded when a selected command failed, was
+unavailable, or was not run.
 
 ## Migration report
 
-Create a concise `REPOSITORY_HARNESS_MIGRATION_REPORT.md`, normally under 90 lines.
-
-Use this structure:
+Create `REPOSITORY_HARNESS_MIGRATION_REPORT.md`, normally under 80 lines:
 
 ```markdown
 # Repository Harness Migration Report
@@ -208,7 +242,7 @@ Status: Ready for review | Needs decisions | Validation failed
 
 ## Summary
 
-Briefly describe what was migrated.
+Brief migration summary.
 
 ## Changes
 
@@ -217,12 +251,23 @@ Briefly describe what was migrated.
 
 ## Exceptions requiring review
 
-List only removed, changed, merged, contradicted, unresolved, or unverifiable instructions.
-Write `None` when there are no exceptions.
+List only removed, changed, merged, contradicted, unresolved, or unverifiable
+instructions. Write `None` when there are none.
+
+## Manifest audit
+
+- Non-blank, non-comment lines:
+- UTF-8 size:
+- Documents:
+- Scopes:
+- Concerns:
+- Routes:
+- Commands:
+- Validation rules:
 
 ## Routing audit
 
-| Example task | Concerns and path evidence | Selected route | Required context | Triggered context | Validation |
+| Example task | Evidence | Route | Required context | Triggered context | Validation |
 | --- | --- | --- | --- | --- | --- |
 | ... | ... | ... | ... | ... | ... |
 
@@ -237,9 +282,8 @@ Write `None` when there are no exceptions.
 
 ## Next actions
 
-List only remaining human decisions, environment repairs, or manual checks.
+Only remaining human decisions, environment repairs, or manual checks.
 ```
 
-Do not include every file inspected, routine shell commands, repeated validation descriptions, or successful details that require no human decision.
-
-Do not claim the migration is ready when schema validation or required repository validation failed.
+Do not include every file inspected, routine commands, repeated explanations,
+or successful details that require no human decision.
