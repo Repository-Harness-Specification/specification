@@ -6,7 +6,7 @@ The runtime around a model that provides tools, state, execution loops, permissi
 
 ## Repository Harness
 
-A repository-owned, versioned contract that describes how agents and humans discover project knowledge, execute operations, validate changes, and determine completion.
+A repository-owned, versioned contract that describes how agents and humans discover project knowledge, select task-relevant context, execute operations, validate changes, and determine completion.
 
 ## Entry Point
 
@@ -14,27 +14,59 @@ A file already understood by a coding agent, such as `AGENTS.md`, that directs t
 
 ## Manifest
 
-The machine-readable `.harness/harness.yaml` file that registers documents, commands, routes, and extensions.
-
-## Capability
-
-A semantic area exposed by the harness, such as architecture, bootstrap, validation, testing, security, readiness, or completion.
+The machine-readable `.harness/harness.yaml` file that registers documents, concerns, commands, ordered routes, and extensions.
 
 ## Document
 
-A human-readable file registered in the manifest that explains a capability.
+A human-readable repository file registered in the manifest. Draft `0.2` routes decide when it is loaded.
+
+## Concern
+
+A repository-defined classification signal used to match routes or trigger conditional context. Concern names are not standardized by the specification.
+
+## Signal
+
+A short repository-defined indicator that helps an agent classify a concern from the request or implementation evidence.
+
+## Candidate Path
+
+A repository-relative path likely to be affected, identified through shallow discovery before modification.
+
+## Changed Path
+
+A repository-relative path modified during the task. Changed paths are used to re-evaluate routing and conditional triggers.
+
+## Route
+
+An ordered repository-defined mapping from concern and path selectors to required context, conditional context, and validation commands.
+
+## Selector
+
+A set of concern or path conditions using `any` and `all` matching semantics.
+
+## Required Context
+
+Documents loaded immediately after a route is selected.
+
+## Conditional Context
+
+Documents that must not be loaded until a declared selector matches concrete concern or path evidence.
 
 ## Command
 
 A reproducible operation registered in the manifest, usually backed by a script or task runner.
 
-## Route
+## Command Availability
 
-A mapping from a task category to relevant documents and required commands.
+Declared executable, platform, or environment-variable requirements checked before a command runs.
+
+## Routing Report
+
+The concise evidence record containing active concerns, selected route, path evidence, loaded documents, conditional triggers, and validation results.
 
 ## Progressive Disclosure
 
-Loading repository context as it becomes relevant instead of loading the entire repository operating manual for every task.
+Loading the smallest justified repository context first and adding registered context only when declared evidence makes it relevant.
 
 ## Definition of Ready
 
